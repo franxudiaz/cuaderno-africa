@@ -16,14 +16,21 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-main);
-  background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+  /* Fondo con patrón de stickers */
+  background-color: #FECFEF;
+  background-image: url('../img/bg_stickers.png');
+  background-repeat: repeat;
+  background-size: 300px;
+  /* Ajuste del tamaño del patrón */
   background-attachment: fixed;
   color: var(--color-texto);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  /* Altura fija al viewport */
   align-items: center;
-  overflow-x: hidden;
+  overflow: hidden;
+  /* Ocultar barras de scroll */
 }
 
 /* Header */
@@ -32,10 +39,10 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.8rem 2rem;
+  background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(5px);
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
@@ -44,7 +51,7 @@ header {
 
 h1 {
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 3rem;
   margin: 0;
   color: #FF6B6B;
   text-shadow: 2px 2px 0px #FFF;
@@ -83,12 +90,12 @@ main {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .menu-container {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
   max-width: 1200px;
@@ -99,8 +106,8 @@ main {
   background-color: var(--color-blanco);
   border-radius: 30px;
   /* Muy redondeado */
-  width: 300px;
-  height: 380px;
+  width: 280px;
+  height: 340px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -108,7 +115,7 @@ main {
   text-decoration: none;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-  padding: 2rem;
+  padding: 1rem;
   border: 5px solid transparent;
   cursor: pointer;
   position: relative;
@@ -131,8 +138,8 @@ main {
 }
 
 .card-btn img {
-  width: 180px;
-  height: 180px;
+  width: 210px;
+  height: 210px;
   object-fit: contain;
   margin-bottom: 1.5rem;
   filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
@@ -176,7 +183,20 @@ footer {
   font-size: 0.9rem;
   color: #888;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+}
+
+footer p {
+  background-color: rgba(255, 255, 255, 0.75);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  display: inline-block;
+  backdrop-filter: blur(2px);
+  font-weight: 600;
+  margin: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 /* Mobile / Tablet Responsiveness */

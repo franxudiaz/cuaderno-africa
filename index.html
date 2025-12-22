@@ -244,7 +244,7 @@
 
     <header>
         <div id="date-display" class="header-info date"></div>
-        <h1>¡Hola África! 🌟</h1>
+        <h1>¡Hola África! 🦄</h1>
         <div id="time-display" class="header-info time"></div>
     </header>
 
@@ -271,11 +271,11 @@
     <script>
         function updateClock() {
             const now = new Date();
-            
+
             // Opciones para la fecha: "Lunes, 22 de Diciembre de 2025"
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const dateString = now.toLocaleDateString('es-ES', dateOptions);
-            
+
             // Opciones para la hora: "23:45:12"
             const timeString = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 

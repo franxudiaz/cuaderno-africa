@@ -127,15 +127,7 @@ main {
   box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
 }
 
-.card-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background-color: rgba(0, 0, 0, 0.05);
-}
+
 
 .card-btn img {
   width: 210px;

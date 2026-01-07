@@ -29,8 +29,8 @@ body {
   height: 100vh;
   /* Altura fija al viewport */
   align-items: center;
-  overflow: hidden;
-  /* Ocultar barras de scroll */
+  overflow-y: auto;
+  /* Permitir scroll vertical si el contenido excede la altura */
 }
 
 /* Header */
@@ -166,6 +166,47 @@ main {
 
 .card-btn.resumenes span {
   color: #FF6B6B;
+}
+
+/* Subject Button Styles */
+.card-btn.subject {
+  width: 160px;
+  height: 160px;
+  padding: 0.8rem;
+}
+
+.card-btn.subject img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0.5rem;
+}
+
+.card-btn.subject span {
+  font-size: 1rem;
+  line-height: 1.1;
+  font-family: var(--font-main);
+  font-weight: 600;
+  text-transform: none;
+  /* Mantener mayúsculas/minúsculas naturales */
+}
+
+/* Specific Subject Colors (Optional - can alternate or be random if needed, 
+   for now just a generic style or we can specific classes per subject if requested) 
+*/
+.card-btn.subject:nth-child(odd) {
+  border-color: var(--color-menta);
+}
+
+.card-btn.subject:nth-child(even) {
+  border-color: var(--color-rosa);
+}
+
+.card-btn.subject:nth-child(3n) {
+  border-color: var(--color-azul);
+}
+
+.card-btn.subject:hover {
+  transform: translateY(-5px) scale(1.02);
 }
 
 /* Footer */

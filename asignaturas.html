@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignaturas - El Cuaderno de África</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mouse+Memoirs&display=swap');
+    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
+</head>
+
+<body>
+
+    <header>
+        <div id="date-display" class="header-info date"></div>
+        <!-- Enlazar el título al inicio también puede ser útil -->
+        <h1 style="cursor: pointer;" onclick="window.location.href='index.html'">¡Vamos a aprender! 🚀</h1>
+        <div id="time-display" class="header-info time"></div>
+    </header>
+
+    <main>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+
+            <nav class="menu-container">
+                <!-- 1. Matemàtiques -->
+                <a href="#" class="card-btn subject">
+                    <!-- Placeholder icon - using pencil or notebook for now unless specific icons provided -->
+                    <img src="assets/img/pencil.png" alt="Matemàtiques">
+                    <span>Matemàtiques</span>
+                </a>
+
+                <!-- 2. Valencià -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Valencià">
+                    <span>Valencià: Llengua i Literatura Valenciana</span>
+                </a>
+
+                <!-- 3. Castellano -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/pencil.png" alt="Castellano">
+                    <span>Llengua Castellana i Literatura</span>
+                </a>
+
+                <!-- 4. Inglés -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Anglès">
+                    <span>Llengua Estrangera: Anglès</span>
+                </a>
+
+                <!-- 5. Conocimiento del Medio -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/pencil.png" alt="Medi Natural">
+                    <span>Coneixement del Medi Natural, Social i Cultural</span>
+                </a>
+
+                <!-- 6. Proyectos -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Proyectos">
+                    <span>Projectes Interdisciplinaris</span>
+                </a>
+
+                <!-- 7. Educación Física -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/pencil.png" alt="EF">
+                    <span>Educació Física</span>
+                </a>
+
+                <!-- 8. Religión -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Religión">
+                    <span>Religió</span>
+                </a>
+
+                <!-- 9. Música y Danza -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/pencil.png" alt="Música">
+                    <span>Música i Dansa</span>
+                </a>
+
+                <!-- 10. Plástica -->
+                <a href="#" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Plástica">
+                    <span>Educació Plàstica i Visual</span>
+                </a>
+            </nav>
+
+            <div style="margin-top: 2rem;">
+                <a href="index.html" style="
+                    display: inline-block;
+                    padding: 1rem 2rem;
+                    background: #FF6B6B;
+                    color: white;
+                    text-decoration: none;
+                    font-family: var(--font-display);
+                    font-size: 1.5rem;
+                    border-radius: 50px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    ⬅️ Volver
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Hecho con ❤️ para la mejor estudiante</p>
+    </footer>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('es-ES', dateOptions);
+            const timeString = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const capitalizedDate = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+
+            const dateElement = document.getElementById('date-display');
+            const timeElement = document.getElementById('time-display');
+
+            if (dateElement) dateElement.textContent = capitalizedDate;
+            if (timeElement) timeElement.textContent = timeString;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+
+</html>

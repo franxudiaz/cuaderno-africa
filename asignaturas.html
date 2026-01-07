@@ -126,6 +126,32 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Logic to handle "type" parameter
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+            const titleElement = document.querySelector('h1');
+
+            if (type === 'ejercicios') {
+                titleElement.textContent = 'Ejercicios 📝';
+                document.title = 'Ejercicios - El Cuaderno de África';
+            } else if (type === 'resumenes') {
+                titleElement.textContent = 'Resúmenes 📚';
+                document.title = 'Resúmenes - El Cuaderno de África';
+            }
+
+            // Actualizar enlaces específicos de asignaturas
+            const castellanoLink = document.querySelector('a[href="#"][class*="subject"]:nth-of-type(3)'); // Selecciona por orden o añadir ID mejor
+            // Vamos a añadir IDs a las cards en el HTML para ser más precisos, pero por ahora podemos buscarlos por texto o imagen alt
+
+            const links = document.querySelectorAll('.card-btn.subject');
+            links.forEach(link => {
+                const imgAlt = link.querySelector('img').alt;
+                if (imgAlt === 'Castellano' || imgAlt.includes('Castellana')) {
+                    link.href = `temas.html?asignatura=castellano&type=${type}`;
+                }
+                // Aquí podemos añadir más `else if` para otras asignaturas
+            });
+
             updateClock();
             setInterval(updateClock, 1000);
         });

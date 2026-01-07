@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temas - El Cuaderno de África</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mouse+Memoirs&display=swap');
+    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
+</head>
+
+<body>
+
+    <header>
+        <div id="date-display" class="header-info date"></div>
+        <h1 style="cursor: pointer;" onclick="goBack()">Temas 🌟</h1>
+        <div id="time-display" class="header-info time"></div>
+    </header>
+
+    <main>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+
+            <h2 id="subject-title"
+                style="color: var(--color-texto); margin-bottom: 2rem; font-family: var(--font-display); font-size: 2.5rem;">
+                Asignatura</h2>
+
+            <nav class="menu-container">
+                <!-- Tema 4 -->
+                <a href="#" id="tema-4-link" class="card-btn subject">
+                    <img src="assets/img/notebook.png" alt="Tema 4">
+                    <span>Tema 4</span>
+                </a>
+
+                <!-- Placeholder para más temas -->
+                <div class="card-btn subject" style="opacity: 0.5; cursor: not-allowed;">
+                    <span style="font-size: 2rem;">Próximamente...</span>
+                </div>
+            </nav>
+
+            <div style="margin-top: 2rem;">
+                <button onclick="goBack()" style="
+                    border: none;
+                    cursor: pointer;
+                    display: inline-block;
+                    padding: 1rem 2rem;
+                    background: #FF6B6B;
+                    color: white;
+                    text-decoration: none;
+                    font-family: var(--font-display);
+                    font-size: 1.5rem;
+                    border-radius: 50px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    ⬅️ Volver
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Hecho con ❤️ para la mejor estudiante</p>
+    </footer>
+
+    <script src="assets/js/clock.js"></script>
+    <script>
+        function goBack() {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type') || 'ejercicios';
+            window.location.href = `asignaturas.html?type=${type}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const asignatura = params.get('asignatura'); // e.g., 'castellano'
+            const type = params.get('type'); // 'ejercicios' or 'resumenes'
+            const subjectTitle = document.getElementById('subject-title');
+            const h1Title = document.querySelector('h1');
+            const tema4Link = document.getElementById('tema-4-link');
+
+            // Configurar títulos
+            let subjectName = "Asignatura";
+            if (asignatura === 'castellano') subjectName = "Lengua Castellana";
+            // ... añadir más mappings si es necesario
+
+            subjectTitle.textContent = subjectName;
+
+            if (type === 'ejercicios') {
+                h1Title.textContent = "Ejercicios 📝";
+                document.title = `Ejercicios ${subjectName} - El Cuaderno de África`;
+                // Configurar link al contenido de ejercicios
+                tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=ejercicios`;
+            } else {
+                h1Title.textContent = "Resúmenes 📚";
+                document.title = `Resúmenes ${subjectName} - El Cuaderno de África`;
+                // Configurar link al contenido de resúmenes
+                tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=resumenes`;
+            }
+
+            // Reutilizar el reloj si el script clock.js hace lo mismo o pegarlo aquí si es simple
+            // Como importamos assets/js/clock.js arriba (asumiendo que existe o lo creamos), si no, usamos el inline.
+            // Revisando los archivos anteriores, el script reloj estaba inline en index.html y asignaturas.html.
+            // Voy a inyectarlo inline para asegurar que funcione igual.
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+
+        function updateClock() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('es-ES', dateOptions);
+            const timeString = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const capitalizedDate = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+
+            const dateElement = document.getElementById('date-display');
+            const timeElement = document.getElementById('time-display');
+
+            if (dateElement) dateElement.textContent = capitalizedDate;
+            if (timeElement) timeElement.textContent = timeString;
+        }
+    </script>
+</body>
+
+</html>

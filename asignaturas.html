@@ -12,7 +12,9 @@
     <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
 </head>
 
+
 <body>
+    <a href="index.html" class="home-btn" title="Ir al Inicio">🏠</a>
 
     <header>
         <div id="date-display" class="header-info date"></div>
@@ -26,64 +28,63 @@
 
             <nav class="menu-container">
                 <!-- 1. Matemàtiques -->
-                <a href="#" class="card-btn subject">
-                    <!-- Placeholder icon - using pencil or notebook for now unless specific icons provided -->
-                    <img src="assets/img/pencil.png" alt="Matemàtiques">
+                <a href="temas.html?asignatura=mates" class="card-btn subject">
+                    <span style="font-size: 4rem;">🔢</span>
                     <span>Matemàtiques</span>
                 </a>
 
                 <!-- 2. Valencià -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/notebook.png" alt="Valencià">
-                    <span>Valencià: Llengua i Literatura Valenciana</span>
+                <a href="temas.html?asignatura=valencia" class="card-btn subject">
+                    <span style="font-size: 4rem;">🦇</span>
+                    <span>Valencià</span>
                 </a>
 
                 <!-- 3. Castellano -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/pencil.png" alt="Castellano">
-                    <span>Llengua Castellana i Literatura</span>
+                <a href="temas.html?asignatura=castellano" class="card-btn subject">
+                    <span style="font-size: 4rem;">📚</span>
+                    <span>Lengua Castellana</span>
                 </a>
 
                 <!-- 4. Inglés -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/notebook.png" alt="Anglès">
-                    <span>Llengua Estrangera: Anglès</span>
+                <a href="temas.html?asignatura=ingles" class="card-btn subject">
+                    <span style="font-size: 4rem;">🇬🇧</span>
+                    <span>Inglés</span>
                 </a>
 
                 <!-- 5. Conocimiento del Medio -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/pencil.png" alt="Medi Natural">
-                    <span>Coneixement del Medi Natural, Social i Cultural</span>
+                <a href="temas.html?asignatura=medi" class="card-btn subject">
+                    <span style="font-size: 4rem;">🏔️</span>
+                    <span>Coneixement del Medi</span>
                 </a>
 
                 <!-- 6. Proyectos -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/notebook.png" alt="Proyectos">
-                    <span>Projectes Interdisciplinaris</span>
+                <a href="temas.html?asignatura=proyectos" class="card-btn subject">
+                    <span style="font-size: 4rem;">🚀</span>
+                    <span>Projectes</span>
                 </a>
 
                 <!-- 7. Educación Física -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/pencil.png" alt="EF">
+                <a href="temas.html?asignatura=ef" class="card-btn subject">
+                    <span style="font-size: 4rem;">⚽</span>
                     <span>Educació Física</span>
                 </a>
 
                 <!-- 8. Religión -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/notebook.png" alt="Religión">
+                <a href="temas.html?asignatura=religion" class="card-btn subject">
+                    <span style="font-size: 4rem;">🕊️</span>
                     <span>Religió</span>
                 </a>
 
                 <!-- 9. Música y Danza -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/pencil.png" alt="Música">
+                <a href="temas.html?asignatura=musica" class="card-btn subject">
+                    <span style="font-size: 4rem;">🎵</span>
                     <span>Música i Dansa</span>
                 </a>
 
                 <!-- 10. Plástica -->
-                <a href="#" class="card-btn subject">
-                    <img src="assets/img/notebook.png" alt="Plástica">
-                    <span>Educació Plàstica i Visual</span>
+                <a href="temas.html?asignatura=plastica" class="card-btn subject">
+                    <span style="font-size: 4rem;">🎨</span>
+                    <span>Educació Plàstica</span>
                 </a>
             </nav>
 
@@ -139,18 +140,19 @@
                 document.title = 'Resúmenes - El Cuaderno de África';
             }
 
-            // Actualizar enlaces específicos de asignaturas
-            const castellanoLink = document.querySelector('a[href="#"][class*="subject"]:nth-of-type(3)'); // Selecciona por orden o añadir ID mejor
-            // Vamos a añadir IDs a las cards en el HTML para ser más precisos, pero por ahora podemos buscarlos por texto o imagen alt
-
+            // Actualizar enlaces para mantener el contexto "type"
             const links = document.querySelectorAll('.card-btn.subject');
             links.forEach(link => {
-                const imgAlt = link.querySelector('img').alt;
-                if (imgAlt === 'Castellano' || imgAlt.includes('Castellana')) {
-                    link.href = `temas.html?asignatura=castellano&type=${type}`;
+                const currentHref = link.getAttribute('href');
+                if (currentHref && currentHref.includes('?')) {
+                    // Si ya tiene parámetros (ej: asignatura=mates), añadimos type
+                    link.href = `${currentHref}&type=${type || 'ejercicios'}`;
+                } else if (currentHref) {
+                    // Si no tiene, lo ponemos como primero
+                    link.href = `${currentHref}?type=${type || 'ejercicios'}`;
                 }
-                // Aquí podemos añadir más `else if` para otras asignaturas
             });
+
 
             updateClock();
             setInterval(updateClock, 1000);

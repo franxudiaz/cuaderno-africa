@@ -12,7 +12,9 @@
     <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
 </head>
 
+
 <body>
+    <a href="index.html" class="home-btn" title="Ir al Inicio">🏠</a>
 
     <header>
         <div id="date-display" class="header-info date"></div>
@@ -29,9 +31,15 @@
 
             <nav class="menu-container">
                 <!-- Tema 4 -->
-                <a href="#" id="tema-4-link" class="card-btn subject">
+                <a href="#" id="tema-4-link" class="card-btn subject" style="display: none;">
                     <img src="assets/img/notebook.png" alt="Tema 4">
                     <span>Tema 4</span>
+                </a>
+
+                <!-- Unit 3 (Inglés) -->
+                <a href="#" id="unit-3-link" class="card-btn subject" style="display: none;">
+                    <img src="assets/img/notebook.png" alt="Unit 3">
+                    <span>Unit 3</span>
                 </a>
 
                 <!-- Placeholder para más temas -->
@@ -80,30 +88,77 @@
             const subjectTitle = document.getElementById('subject-title');
             const h1Title = document.querySelector('h1');
             const tema4Link = document.getElementById('tema-4-link');
+            const unit3Link = document.getElementById('unit-3-link');
+            const menuContainer = document.querySelector('.menu-container');
 
             // Configurar títulos
             let subjectName = "Asignatura";
             if (asignatura === 'castellano') subjectName = "Lengua Castellana";
-            // ... añadir más mappings si es necesario
+            else if (asignatura === 'ingles') subjectName = "Inglés / English";
+            else if (asignatura === 'valencia') subjectName = "Valencià";
+            else if (asignatura === 'mates') subjectName = "Matemáticas";
 
             subjectTitle.textContent = subjectName;
+
+            if (asignatura === 'mates') {
+                // Lógica específica para Mates: Títulos personalizados ("Apartados" en vez de Temas)
+                // y contenido específico
+                document.title = `Apartados ${subjectName} - El Cuaderno de África`;
+                h1Title.textContent = "Apartados 🗂️"; // O "Secciones"
+
+                // Show content only if type is 'ejercicios'
+                if (type === 'ejercicios') {
+                    menuContainer.innerHTML = `
+                        <a href="contenido.html?asignatura=mates&tema=operaciones&type=${type}" class="card-btn subject">
+                            <span style="font-size: 3rem;">➕➖</span>
+                            <span>Sumo y Resto (Llevándome)</span>
+                        </a>
+                     `;
+                } else {
+                    menuContainer.innerHTML = `
+                        <div class="summary-card" style="text-align: center; background: #FFF3E0; width: 100%;">
+                            <h3>🚫 Sin Resúmenes</h3>
+                            <p>En Matemáticas solo practicamos con ejercicios. ¡Vuelve atrás y pulsa en "Ejercicios"! 💪</p>
+                        </div>
+                     `;
+                }
+                return; // Stop here for Mates
+            }
 
             if (type === 'ejercicios') {
                 h1Title.textContent = "Ejercicios 📝";
                 document.title = `Ejercicios ${subjectName} - El Cuaderno de África`;
                 // Configurar link al contenido de ejercicios
-                tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=ejercicios`;
+                if (asignatura === 'ingles') {
+                    unit3Link.href = `contenido.html?asignatura=ingles&tema=3&type=ejercicios`;
+                    unit3Link.style.display = 'flex';
+                } else {
+                    tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=ejercicios`;
+                    tema4Link.style.display = 'flex';
+                }
+                // Hide placeholder if themes are shown (using simple logic)
+                const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
+                if (placeholder) placeholder.style.display = 'none';
+
             } else {
                 h1Title.textContent = "Resúmenes 📚";
                 document.title = `Resúmenes ${subjectName} - El Cuaderno de África`;
                 // Configurar link al contenido de resúmenes
-                tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=resumenes`;
+                if (asignatura === 'ingles') {
+                    unit3Link.href = `contenido.html?asignatura=ingles&tema=3&type=resumenes`;
+                    unit3Link.style.display = 'flex';
+                } else {
+                    tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=resumenes`;
+                    tema4Link.style.display = 'flex';
+                }
+                // Hide placeholder
+                const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
+                if (placeholder) placeholder.style.display = 'none';
             }
 
             // Reutilizar el reloj si el script clock.js hace lo mismo o pegarlo aquí si es simple
             // Como importamos assets/js/clock.js arriba (asumiendo que existe o lo creamos), si no, usamos el inline.
             // Revisando los archivos anteriores, el script reloj estaba inline en index.html y asignaturas.html.
-            // Voy a inyectarlo inline para asegurar que funcione igual.
             updateClock();
             setInterval(updateClock, 1000);
         });

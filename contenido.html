@@ -78,12 +78,12 @@
             border-color: #dc3545;
             color: #721c24;
         }
-
-        /* Tabs para cambiar entre resumen y ejercicios si se desea, aunque por ahora viene predefinido por URL */
     </style>
 </head>
 
+
 <body>
+    <a href="index.html" class="home-btn" title="Ir al Inicio">🏠</a>
 
     <header>
         <div id="date-display" class="header-info date"></div>
@@ -131,174 +131,584 @@
             const params = new URLSearchParams(window.location.search);
             const type = params.get('type') || 'ejercicios';
             const asignatura = params.get('asignatura') || 'castellano';
-            window.location.href = `temas.html?asignatura=${asignatura}&type=${type}`;
+            const tema = params.get('tema');
+            const subseccion = params.get('subseccion');
+
+            // Si estamos en una subsección (dentro de una ficha y NO es math), volvemos al menú del tema
+            // Para Mates, siempre volvemos a temas.html
+            if (asignatura === 'mates') {
+                window.location.href = `temas.html?asignatura=${asignatura}&type=${type}`;
+                return;
+            }
+
+            if (subseccion) {
+                window.location.href = `contenido.html?asignatura=${asignatura}&tema=${tema}&type=${type}`;
+            } else {
+                window.location.href = `temas.html?asignatura=${asignatura}&type=${type}`;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const type = params.get('type');
-            const modeTitle = document.getElementById('content-mode-title');
-            const contentArea = document.getElementById('content-area');
-
-            if (type === 'ejercicios') {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const asignatura = params.get('asignatura');
+                const type = params.get('type');
                 const subseccion = params.get('subseccion');
+                const tema = params.get('tema'); // Puede ser undefined
 
-                if (!subseccion) {
-                    // MODO MENÚ: Seleccionar qué parte del tema practicar
-                    modeTitle.textContent = "Elige una sección 🦄";
-                    document.title = "Selección - Tema 4";
+                const modeTitle = document.getElementById('content-mode-title');
+                const contentArea = document.getElementById('content-area');
 
-                    contentArea.innerHTML = `
-                        <div class="menu-container" style="flex-direction: column; align-items: stretch; gap: 1rem;">
+                // ROUTING SYSTEM
+                // 1. Mates (Calculadora / Batch)
+                if (asignatura === 'mates') {
+                    modeTitle.textContent = "Matemáticas - Sumo y Resto (Llevándome) 🧮";
+                    document.title = "Sumo y Resto - Matemáticas";
+                    renderMath(contentArea);
+
+                    // 2. Valencià
+                } else if (asignatura === 'valencia' || asignatura === 'valencià') {  // Handle alias if any
+                    if (type === 'resumenes') {
+                        renderValenciaResumenes(contentArea, modeTitle, tema);
+                    } else {
+                        renderValenciaEjercicios(contentArea, modeTitle, tema, subseccion, params);
+                    }
+
+                    // 3. Inglés
+                } else if (asignatura === 'ingles' || asignatura === 'english') {
+                    if (type === 'resumenes') {
+                        renderInglesResumenes(contentArea, modeTitle, tema);
+                    } else {
+                        renderInglesEjercicios(contentArea, modeTitle, tema);
+                    }
+
+                    // 4. Lengua Castellana
+                } else if (asignatura === 'castellano' || asignatura === 'lengua') {
+                    if (type === 'resumenes') {
+                        renderLenguaResumenes(contentArea, modeTitle); // Default Theme 4
+                    } else {
+                        renderLenguaEjercicios(contentArea, modeTitle, subseccion, params);
+                    }
+
+                    // 5. Default / Work In Progress (Medi, Religion, etc.)
+                } else {
+                    renderWorkInProgress(contentArea, modeTitle, asignatura);
+                }
+
+                // --- HELPER FUNCTIONS ---
+
+                function renderMath(container) {
+                    container.innerHTML = `
+                    <div id="math-container" style="text-align: center;">
+                        <div class="summary-card" style="background: #E3F2FD; margin-bottom: 2rem;">
+                            <h3>🧮 ¡A calcular!</h3>
+                            <p>Resuelve las 20 operaciones y luego pulsa el botón de comprobar. 🏁</p>
+                        </div>
+                        <div id="math-grid" style="
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                            gap: 2rem;
+                            width: 100%;
+                            max-width: 1000px;
+                            margin: 0 auto;
+                        ">
+                        </div>
+                        <div style="margin-top: 3rem; text-align: center;">
+                            <button onclick="checkMathBatch()" style="
+                                background: #4ECDC4; color: white; border: none; padding: 1rem 4rem; font-size: 1.8rem; 
+                                border-radius: 50px; font-family: var(--font-display); cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                                transition: transform 0.2s;
+                            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                ✅ Comprovar Tot!
+                            </button>
+                        </div>
+                        <div id="final-score" style="margin-top: 2rem; font-size: 2rem; font-weight: bold; color: #333;"></div>
+                    </div>
+                 `;
+                    // Init existing math logic if available globally, otherwise define it.
+                    // Assuming generateMathOperation is defined in a separate script or we need to add it here.
+                    // WAIT: I saw generateMathOperation call in step 886. But NO DEFINITION.
+                    // It must be in the previous versions of the file.
+                    // I MUST INCLUDE generateMathOperation logic here if it was inline!
+                    if (typeof generateMathOperation === 'function') {
+                        generateMathOperation();
+                    } else {
+                        // Define Math Logic Here if missing
+                        initMathLogic();
+                    }
+                }
+
+                function renderWorkInProgress(container, titleElement, subject) {
+                    titleElement.textContent = "¡En Construcción! 🚧";
+                    document.title = "En Construcción";
+                    container.innerHTML = `
+                         <div style="text-align: center; padding: 3rem;">
+                            <div style="font-size: 5rem; margin-bottom: 2rem;">👷‍♀️🏗️</div>
+                            <h3>¡Estamos trabajando en ${subject ? subject.toUpperCase() : 'esta asignatura'}!</h3>
+                            <p>Pronto tendrás ejercicios y resúmenes aquí.</p>
+                            <p style="margin-top: 2rem; color: #888;">Mientras tanto, prueba con Mates, Valencià o Lengua.</p>
+                         </div>
+                    `;
+                }
+
+                function renderInglesEjercicios(container, titleElement, tema) {
+                    titleElement.textContent = "Unit 3 Exercises 🇬🇧";
+                    document.title = "Exercises - Unit 3";
+                    container.innerHTML = `
+                     <div id="exercise-list">
+                        <!-- True or False Section -->
+                        <div class="exercise-card">
+                            <h3>1. Read and circle Yes or No</h3>
                             
-                            <!-- 1. Comprendo el cuento -->
-                            <a href="contenido.html?asignatura=${params.get('asignatura')}&tema=4&type=ejercicios&subseccion=comprendo" class="card-btn" style="width: 100%; height: auto; flex-direction: row; justify-content: start; padding: 1.5rem; background: #FFB7B2;">
-                                <img src="assets/img/notebook.png" alt="Cuento" style="width: 60px; height: 60px; margin: 0 1rem 0 0;">
-                                <div style="text-align: left;">
-                                    <h3 style="margin: 0; font-size: 1.5rem; color: white;">1. Comprendo el cuento</h3>
-                                    <span style="font-size: 1rem; color: white;">El reloj de Mica</span>
-                                </div>
-                            </a>
-
-                            <!-- Placeholder para otras secciones -->
-                            <div class="card-btn" style="opacity: 0.6; width: 100%; height: auto; flex-direction: row; justify-content: start; padding: 1.5rem; background: #ddd; cursor: not-allowed;">
-                                <span style="font-size: 1.5rem; color: #888;">2. Entiendo la lengua (Próximamente)</span>
+                            <div class="true-false-item" style="margin-bottom: 1rem;">
+                                <p>🐢 <strong>The turtle is fast.</strong></p>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Yes</button>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">No</button>
                             </div>
-                             <div class="card-btn" style="opacity: 0.6; width: 100%; height: auto; flex-direction: row; justify-content: start; padding: 1.5rem; background: #ddd; cursor: not-allowed;">
-                                <span style="font-size: 1.5rem; color: #888;">3. Escribo bien (Próximamente)</span>
+
+                            <div class="true-false-item" style="margin-bottom: 1rem;">
+                                <p>🐘 <strong>The elephant is small.</strong></p>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Yes</button>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">No</button>
+                            </div>
+
+                            <div class="true-false-item" style="margin-bottom: 1rem;">
+                                <p>🦒 <strong>The giraffe is tall.</strong></p>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">Yes</button>
+                                <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">No</button>
                             </div>
                         </div>
-                    `;
-                } else if (subseccion === 'comprendo') {
-                    // MODO EJERCICIOS: Comprendo el cuento
-                    modeTitle.textContent = "Comprendo el cuento 📖";
-                    document.title = "Comprendo el cuento - Tema 4";
 
-                    contentArea.innerHTML = `
-                        <div id="exercise-list">
-                            <div class="exercise-card">
-                                <h3>1. ¿De quién habla el comienzo del cuento?</h3>
-                                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                     <button class="btn-option" onclick="selectOption(this, false)">Arabela (Hada)</button>
-                                     <button class="btn-option" onclick="selectOption(this, false)">Topi (Niño)</button>
-                                     <button class="btn-option" onclick="selectOption(this, true)">Mica (Troll)</button>
-                                </div>
+                         <!-- Grammar Section -->
+                        <div class="exercise-card">
+                            <h3>3. Has got / Hasn't got</h3>
+                            <p>Check the correct option.</p>
+                            
+                            <div style="margin-top: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 1rem;">
+                                <p>🦒 <strong>Giraffe</strong></p>
+                                <p>It ______ long neck.</p>
+                                <button class="btn-option" onclick="selectOption(this, true)">has got ✔️</button>
+                                <button class="btn-option" onclick="selectOption(this, false)">hasn't got ❌</button>
                             </div>
 
-                            <div class="exercise-card">
-                                <h3>2. Marca si es verdadero (V) o falso (F)</h3>
-                                <div class="true-false-item">
-                                    <p>Mica vigila un nido de gorriones.</p>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Verdadero</button>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">Falso</button>
-                                </div>
-                                <div class="true-false-item" style="margin-top: 1rem;">
-                                    <p>Arabela arregla el reloj cuando se rompe.</p>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">Verdadero</button>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Falso</button>
-                                </div>
-                                <div class="true-false-item" style="margin-top: 1rem;">
-                                    <p>El reloj tiene dibujos de un sol y una luna.</p>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">Verdadero</button>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Falso</button>
-                                </div>
-                                <div class="true-false-item" style="margin-top: 1rem;">
-                                    <p>Monteoscuro se queda de noche para siempre.</p>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, false)">Verdadero</button>
-                                    <button class="btn-option" style="display:inline-block; width:45%;" onclick="selectOption(this, true)">Falso</button>
-                                </div>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>3. ¿Cómo se llama el reloj que encuentra Mica?</h3>
-                                <button class="btn-option" onclick="selectOption(this, false)">Reloj de cuco</button>
-                                <button class="btn-option" onclick="selectOption(this, true)">Reloj universal</button>
-                                <button class="btn-option" onclick="selectOption(this, false)">Reloj de arena</button>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>4. ¿Cómo funciona el reloj?</h3>
-                                <button class="btn-option" onclick="selectOption(this, false)">Hay que enchufarlo</button>
-                                <button class="btn-option" onclick="selectOption(this, false)">Hay que ponerle pilas</button>
-                                <button class="btn-option" onclick="selectOption(this, true)">Hay que darle cuerda</button>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>5. ❤️ ¿Cómo te sentirías tú?</h3>
-                                <p>Mica se asusta cuando piensa que va a ser siempre de noche. ¿Cómo te sentirías tú si te pasara a ti?</p>
-                                <textarea style="width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 2px solid #ccc; font-family: var(--font-main);" placeholder="Yo me sentiría..."></textarea>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>6. 👀 Con ojos curiosos</h3>
-                                <p>Imaginad que estáis en el patio y de repente es <strong>verano</strong>. Escribe qué pasaría:</p>
-                                <!-- (Inputs simplificados para demo) -->
-                                <textarea style="width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 2px solid #ccc; font-family: var(--font-main);" placeholder="Vería..., oiría..."></textarea>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>7. 🕰️ Une cada esfera con lo que cambia</h3>
-                                <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                                    <p><strong>1. Esfera con Sol y Luna</strong></p>
-                                    <button class="btn-option" onclick="selectOption(this, false)">Cambia las estaciones</button>
-                                    <button class="btn-option" onclick="selectOption(this, true)">Cambia el día y la noche</button>
-                                </div>
-                                <div>
-                                    <p><strong>2. Esfera con Números</strong></p>
-                                    <button class="btn-option" onclick="selectOption(this, false)">Cambia las estaciones</button>
-                                    <button class="btn-option" onclick="selectOption(this, true)">Da la hora</button>
-                                </div>
-                            </div>
-
-                            <div class="exercise-card">
-                                <h3>8. 🎨 Inventa y Crea</h3>
-                                <p>Inventa una <strong>nueva esfera</strong>.</p>
-                                <textarea style="width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 2px solid #ccc; font-family: var(--font-main);" placeholder="Anotaciones..."></textarea>
+                            <div style="margin-top: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 1rem;">
+                                <p>🐊 <strong>Crocodile</strong></p>
+                                <p>It ______ small ears.</p>
+                                <button class="btn-option" onclick="selectOption(this, false)">has got ✔️</button>
+                                <button class="btn-option" onclick="selectOption(this, true)">hasn't got ❌ (No ears visible!)</button>
                             </div>
                         </div>
 
                         <div style="margin-top: 2rem; text-align: center;">
                             <button onclick="calculateScore()" style="
-                                background: #4ECDC4; color: white; border: none; padding: 1rem 3rem; font-size: 1.5rem; 
-                                border-radius: 50px; font-family: var(--font-display); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-                            ">¡ He terminado ! ✅</button>
+                            background: #4ECDC4; color: white; border: none; padding: 1rem 3rem; font-size: 1.5rem; 
+                            border-radius: 50px; font-family: var(--font-display); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                        ">Check Answers! ✅</button>
                             <div id="score-result" style="display:none; margin-top: 1rem; font-size: 1.5rem; font-weight: bold; color: #FF6B6B;"></div>
+                        </div>
+                     </div>`;
+                }
+
+                function renderInglesResumenes(container, titleElement, tema) {
+                    titleElement.textContent = "Summary Unit 3 🇬🇧";
+                    document.title = "Summary - Unit 3";
+                    container.innerHTML = `
+                    <div class="summary-card">
+                        <h3>🦁 Wild Animals Vocabulary</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <p>🐒 Monkey (Mono)</p>
+                            <p>🦁 Lion (León)</p>
+                            <p>🦓 Zebra (Cebra)</p>
+                            <p>🦒 Giraffe (Jirafa)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <h3>📏 Adjectives (Adjetivos)</h3>
+                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <p><strong>Big</strong> (Grande) 🐘</p>
+                            <p><strong>Small</strong> (Pequeño) 🐭</p>
+                            <p><strong>Fast</strong> (Rápido) 🐆</p>
+                            <p><strong>Slow</strong> (Lento) 🐢</p>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>📝 Grammar: Has got / Hasn't got</h3>
+                        <p>Usamos <strong>"Has got"</strong> para decir lo que un animal TIENE.</p>
+                        <p>Usamos <strong>"Hasn't got"</strong> para decir lo que un animal NO TIENE.</p>
+                    </div>`;
+                }
+
+                function renderLenguaResumenes(container, titleElement) {
+                    titleElement.textContent = "Resumen del Tema 4 📚";
+                    document.title = "Resumen Tema 4";
+
+                    container.innerHTML = `
+                        <!-- SECCIÓN 1: CUENTO -->
+                    <div style="margin-bottom: 3rem; border-bottom: 3px dashed #FFB7B2; padding-bottom: 2rem;">
+                        <h2 style="text-align: center; color: #FF6B6B; font-family: var(--font-display); margin-bottom: 1.5rem;">1. Comprendo el cuento 📖</h2>
+                        
+                        <div class="summary-card">
+                            <h3>🦄 ¿De qué va la historia?</h3>
+                            <p><strong>Mica</strong> (la protagonista) y sus amigos encuentran un objeto muy misterioso escondido en el colegio: <strong>¡Un Reloj Universal!</strong> 🕰️✨</p>
+                        </div>
+                        
+                        <div class="summary-card">
+                            <h3>💡 Lo que aprendemos</h3>
+                            <p>Con esta historia practicamos la <strong>lectura</strong> y entendemos mejor cómo funciona el paso del tiempo.</p>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN 2: LENGUA -->
+                        <div>
+                            <h2 style="text-align: center; color: #4ECDC4; font-family: var(--font-display); margin-bottom: 1.5rem;">2. Entiendo la lengua 🗣️</h2>
+
+                            <div class="summary-card" style="background: #E0F7FA;">
+                                <h3>🗣️ Los Pronombres Personales</h3>
+                                <p>Las palabras <strong>yo, tú, él, ella...</strong> sirven para nombrar a personas sin decir su nombre.</p>
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem;">
+                                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #FF6B6B;">
+                                        <h4 style="margin-top:0; color: #FF6B6B;">1️⃣ Singular</h4>
+                                        <p>🔴 <strong>Yo</strong>, 🔵 <strong>Tú</strong>, 🟢 <strong>Él / Ella</strong></p>
+                                    </div>
+                                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #4ECDC4;">
+                                        <h4 style="margin-top:0; color: #4ECDC4;">➕ Plural</h4>
+                                        <p>🔴 <strong>Nosotros/as</strong>, 🔵 <strong>Vosotros/as</strong>, 🟢 <strong>Ellos/as</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- SECCIÓN 3: ESCRIBO BIEN -->
+                        <div>
+                            <h2 style="text-align: center; color: #FFD54F; font-family: var(--font-display); margin-bottom: 1.5rem; margin-top: 3rem;">3. Escribo bien ✍️</h2>
+
+                            <div class="summary-card" style="background: #FFF9C4;">
+                                <h3>🔤 za, zo, zu, ce, ci</h3>
+                                <p>El sonido <strong>Z</strong> se escribe de dos formas diferentes:</p>
+                                <p><strong>Za, Zo, Zu</strong> (zapato) | <strong>Ce, Ci</strong> (cesta)</p>
+                            </div>
+                        </div>
+                        
+                    <!-- SECCIÓN 4: PALABRAS -->
+                        <div>
+                            <h2 style="text-align: center; color: #81C784; font-family: var(--font-display); margin-bottom: 1.5rem; margin-top: 3rem;">4. Conozco las palabras 🎭</h2>
+                             <div class="summary-card" style="background: #F1F8E9;">
+                                <h3>🎭 Palabras Polisémicas</h3>
+                                <p>¡Son palabras mágicas! ✨ Se escriben igual pero significan cosas diferentes.</p>
+                                <ul style="list-style: none; padding: 0;">
+                                    <li>🍂 <strong>Hoja:</strong> De árbol o de papel.</li>
+                                    <li>💌 <strong>Carta:</strong> De baraja o de correo.</li>
+                                    <li>💰 <strong>Banco:</strong> De sentarse o de dinero.</li>
+                                </ul>
+                            </div>
                         </div>
                     `;
                 }
 
-            } else {
-                modeTitle.textContent = "Resumen del Tema 4 📚";
-                document.title = "Resumen Tema 4";
+                function renderLenguaEjercicios(container, titleElement, subseccion, params) {
+                    titleElement.textContent = "Ejercicios de Lengua ✍️";
+                    document.title = "Ejercicios - Lengua";
+                    const asignatura = params.get('asignatura');
 
-                contentArea.innerHTML = `
-                    <div class="summary-card">
-                        <h3>🦄 ¿De qué va la historia?</h3>
-                        <p><strong>Mica</strong> (la protagonista) y sus amigos encuentran un objeto muy misterioso escondido en el colegio: <strong>¡Un Reloj Universal!</strong> 🕰️✨</p>
-                    </div>
-                    
-                    <div class="summary-card">
-                        <h3>🔍 ¿Qué tiene de especial este reloj?</h3>
-                        <p>No es un reloj normal. En lugar de una sola cara, tiene <strong>tres esferas</strong> diferentes:</p>
-                        <ul>
-                            <li>🔢 <strong>La de los números:</strong> Marca la hora, como los relojes normales.</li>
-                            <li>☀️🌙 <strong>La del Sol y la Luna:</strong> Sirve para cambiar entre el <strong>día y la noche</strong>.</li>
-                            <li>❄️🌻 <strong>La de los dibujos (nieve, flores...):</strong> Sirve para cambiar las <strong>estaciones</strong> (Invierno, Primavera, Verano, Otoño).</li>
+                    if (!subseccion) {
+                        container.innerHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&subseccion=gramatica" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">🗣️</span>
+                                    <span style="font-size: 1.5rem;">Gramática: Pronombres</span>
+                                </a>
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&subseccion=ortografia" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">✍️</span>
+                                    <span style="font-size: 1.5rem;">Ortografía: za, zo, zu</span>
+                                </a>
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&subseccion=vocabulario" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">🃏</span>
+                                    <span style="font-size: 1.5rem;">Vocabulario: Polisémicas</span>
+                                </a>
+                            </div>
+                         `;
+                        return;
+                    }
+
+                    if (subseccion === 'gramatica') {
+                        container.innerHTML = `
+                            <div class="exercise-card">
+                                <h3>🗣️ Los Pronombres Personales</h3>
+                                <p>Sustituye la palabra destacada por un pronombre (Yo, Tú, Él, Nosotros...)</p>
+                                <div class="question-block">
+                                    <p>1. <strong>Juan</strong> juega al balón.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Yo</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Él</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">Nosotros</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. <strong>Ana y yo</strong> comemos helado.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Vosotras</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Nosotras</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">Ellas</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>3. <strong>Mis amigos</strong> van al cine.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Nosotros</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Ellos</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprobar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                        `;
+                    } else if (subseccion === 'ortografia') {
+                        container.innerHTML = `
+                             <div class="exercise-card">
+                                <h3>✍️ za, zo, zu, ce, ci</h3>
+                                <p>Elige la sílaba correcta.</p>
+                                <div class="question-block">
+                                    <p>1. Me gusta el ___mo de naranja.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">zu</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">cu</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. Ponte el ___pato.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">za</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">ca</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>3. La ___reza es roja.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">que</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">ce</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprobar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                        `;
+                    } else if (subseccion === 'vocabulario') {
+                        container.innerHTML = `
+                             <div class="exercise-card">
+                                <h3>🎭 Palabras Polisémicas</h3>
+                                <p>¿Qué significa la palabra destacada en cada frase?</p>
+                                <div class="question-block">
+                                    <p>1. He escrito una <strong>carta</strong> a mi abuela.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Naipes de juego</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Papel con mensaje</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. El <strong>banco</strong> está lleno de peces.</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Asiento del parque</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Grupo de peces</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprobar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `<p>Sección no encontrada.</p>`;
+                    }
+                }
+
+                function renderValenciaResumenes(container, titleElement, tema) {
+                    titleElement.textContent = "Resum Valencià 🥘";
+                    document.title = "Resum - Valencià";
+
+                    container.innerHTML = `
+                    <div class="summary-card" style="background: #E8F5E9; border-left-color: #4CAF50;">
+                        <h3>🐾 Fitxa 4: D'animals i animalets</h3>
+                        <p>Vocabulari de les famílies d'animals:</p>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li>🐂 <strong>Bou</strong> (Pare) - 🐄 <strong>Vaca</strong> (Mare) - 🍼 <strong>Vedella</strong> (Cria)</li>
+                            <li>🐎 <strong>Cavall</strong> - 🦄 <strong>Egua</strong> - 🐴 <strong>Poltre</strong></li>
+                            <li>🐏 <strong>Moltó</strong> - 🐑 <strong>Ovella</strong> - 🧶 <strong>Corder</strong></li>
                         </ul>
-                    </div>
-
-                    <div class="summary-card">
-                        <h3>⚠️ ¡El problema!</h3>
-                        <p>Mica empieza a jugar con las agujas y, sin querer, hace que se haga de noche... <strong>¡y rompe la aguja!</strong> 😱</p>
-                        <p>Todos se asustan porque piensan que se quedarán a oscuras para siempre. Pero por suerte, <strong>Arabela</strong> (el hada) sabe arreglarlo.</p>
+                        <p><strong>Noms especials de cries:</strong> Conill ➝ Catxap, Àguila ➝ Aguiló.</p>
                     </div>
                     
-                    <div class="summary-card">
-                        <h3>💡 Lo que aprendemos</h3>
-                        <p>Con esta historia practicamos la <strong>lectura</strong> y entendemos mejor cómo funciona el paso del tiempo: las horas, los días y las estaciones.</p>
-                        <p><em>¡Recuerda leer despacito y fijarte bien en los detalles para responder a las preguntas!</em> 😉</p>
+                    <div class="summary-card" style="background: #E1F5FE; border-left-color: #2196F3;">
+                        <h3>✍️ Fitxa 5: Els signes de puntuació</h3>
+                        <p><strong>: Els dos punts</strong> ➝ Abans de llistar coses o després de saludar.</p>
+                        <p><strong>, La coma</strong> ➝ Per a separar paraules en una llista.</p>
                     </div>
-                `;
+
+                    <div class="summary-card" style="background: #FFF3E0; border-left-color: #FF9800;">
+                        <h3>🐢 Fitxa 6: Aventures animals</h3>
+                        <p><strong>Les faules</strong> són històries on els animals parlen i ens ensenyen coses importants.</p>
+                    </div>
+                    `;
+                }
+
+                function renderValenciaEjercicios(container, titleElement, tema, subseccion, params) {
+                    titleElement.textContent = "Exercicis de Valencià 🥘";
+                    document.title = "Exercicis - Valencià";
+                    const asignatura = params.get('asignatura');
+
+                    if (!subseccion) {
+                        container.innerHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&tema=${tema}&subseccion=fitxa4" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">📝</span>
+                                    <span style="font-size: 1.5rem;">Fitxa 4: D'animals</span>
+                                </a>
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&tema=${tema}&subseccion=fitxa5" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">🃏</span>
+                                    <span style="font-size: 1.5rem;">Fitxa 5: Puntuació</span>
+                                </a>
+                                <a href="contenido.html?asignatura=${asignatura}&type=ejercicios&tema=${tema}&subseccion=fitxa6" class="card-btn subject" style="width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 1.5rem; border-radius: 15px;">
+                                    <span style="font-size: 2.5rem; margin-right: 1.5rem;">📖</span>
+                                    <span style="font-size: 1.5rem;">Fitxa 6: Lectura / Faules</span>
+                                </a>
+                            </div>
+                         `;
+                        return;
+                    }
+
+                    if (subseccion === 'fitxa4') {
+                        container.innerHTML = `
+                            <div class="exercise-card">
+                                <h3>Fitxa 4: Parelles d'animals</h3>
+                                <p>Qui va amb qui?</p>
+                                <div class="question-block">
+                                    <p>1. 🐐 <strong>Cabra</strong> va amb...</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Conill</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Cabrit</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. 🐸 <strong>Granota</strong> va amb...</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">Cullerot</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">Catxap</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprovar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                         `;
+                    } else if (subseccion === 'fitxa5') {
+                        container.innerHTML = `
+                            <div class="exercise-card">
+                                <h3>Fitxa 5: Signes de puntuació</h3>
+                                <p>Tria : o ,</p>
+                                <div class="question-block">
+                                    <p>1. "M'agraden molt els animals<strong>___</strong> dofins, gossos i gats."</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">Dos punts (:)</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">Coma (,)</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. "Dofins<strong>___</strong> gossos i gats."</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, false)">Dos punts (:)</button>
+                                        <button class="btn-option" onclick="selectOption(this, true)">Coma (,)</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprovar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                        `;
+                    } else if (subseccion === 'fitxa6') {
+                        container.innerHTML = `
+                            <div class="exercise-card">
+                                <h3>Fitxa 6: La llebre i la tortuga</h3>
+                                <p>Què va passar primer?</p>
+                                <div class="question-block">
+                                    <p>1. Al principi de la història...</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">La llebre es reia de la tortuga</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">La tortuga va guanyar</button>
+                                    </div>
+                                </div>
+                                <div class="question-block">
+                                    <p>2. Per què va guanyar la tortuga?</p>
+                                    <div class="options-container">
+                                        <button class="btn-option" onclick="selectOption(this, true)">Perquè la llebre es va adormir</button>
+                                        <button class="btn-option" onclick="selectOption(this, false)">Perquè la tortuga corria molt</button>
+                                    </div>
+                                </div>
+                                <button class="check-btn" onclick="calculateScore()">Comprovar ✅</button>
+                                <div id="score-result" class="score-display"></div>
+                            </div>
+                         `;
+                    } else {
+                        container.innerHTML = `<p>Fitxa no trobada.</p>`;
+                    }
+                }
+
+                // Math Logic Injection (Restoring missing logic if it was inline)
+                function initMathLogic() {
+                    const grid = document.getElementById('math-grid');
+                    if (grid) {
+                        grid.innerHTML = ''; // Clean
+                        for (let i = 0; i < 20; i++) {
+                            const isAddition = Math.random() > 0.5;
+                            const num1 = Math.floor(Math.random() * 90) + 10;
+                            const num2 = Math.floor(Math.random() * 90) + 10;
+
+                            // Ensure 2-digit result for subtraction to be positive, and carrying/borrowing if desired
+                            // Simple logic:
+                            let op = isAddition ? '+' : '-';
+                            let val1 = num1;
+                            let val2 = num2;
+                            if (!isAddition && val2 > val1) { [val1, val2] = [val2, val1]; } // Swap for positive result
+
+                            const div = document.createElement('div');
+                            div.className = 'exercise-card';
+                            div.style.textAlign = 'center';
+                            div.innerHTML = `
+                                <div style="font-size: 2rem; font-family: monospace; letter-spacing: 5px;">
+                                    ${val1}<br>${op}${val2}<br><hr>
+                                </div>
+                                <input type="number" class="math-input" data-correct="${isAddition ? val1 + val2 : val1 - val2}" style="
+                                    font-size: 1.5rem; width: 80px; text-align: center; border: 2px solid #ccc; border-radius: 10px; padding: 5px;
+                                ">
+                            `;
+                            grid.appendChild(div);
+                        }
+                    }
+                }
+
+                window.checkMathBatch = function () {
+                    const inputs = document.querySelectorAll('.math-input');
+                    let correct = 0;
+                    inputs.forEach(input => {
+                        const val = parseInt(input.value);
+                        const expected = parseInt(input.dataset.correct);
+                        if (val === expected) {
+                            input.style.backgroundColor = '#d4edda';
+                            input.style.borderColor = '#28a745';
+                            correct++;
+                        } else {
+                            input.style.backgroundColor = '#f8d7da';
+                            input.style.borderColor = '#dc3545';
+                        }
+                    });
+                    document.getElementById('final-score').textContent = `Puntuación: ${correct} / 20`;
+                    if (correct === 20) {
+                        document.getElementById('final-score').textContent += " ¡INCREÍBLE! 🏆";
+                        const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clown_horn.ogg'); // Example sound or none
+                    }
+                };
+
+            } catch (error) {
+                alert("Error crítico en el script: " + error.message + "\n\n" + error.stack);
+                console.error(error);
+                document.getElementById('content-area').innerHTML = `<h1>💥 Error Critico</h1><p>${error.message}</p>`;
             }
 
             updateClock();
@@ -327,10 +737,6 @@
         function calculateScore() {
             const selectedOptions = document.querySelectorAll('.btn-option.selected');
             let correctCount = 0;
-            let totalQuestions = 0;
-
-            // Contamos "preguntas" como grupos de botones, una aproximación simple
-            // Mejor: contar aciertos explícitos vs errores
 
             selectedOptions.forEach(btn => {
                 if (btn.dataset.correct === 'true') {
@@ -349,7 +755,6 @@
 
             if (correctCount > 0) {
                 resultDiv.textContent = `¡Has acertado ${correctCount} preguntas! 🎉`;
-                // Efecto confeti si pudiéramos
             } else {
                 resultDiv.textContent = `¡Sigue intentándolo! Tú puedes 💪`;
             }

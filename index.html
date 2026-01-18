@@ -9,234 +9,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mouse+Memoirs&display=swap');
 
         :root {
+            /* Fallback variables if theme.js fails to load immediately, though logic handles it */
             --color-rosa: #FFB7B2;
             --color-menta: #B5EAD7;
-            --color-azul: #C7CEEA;
-            --color-violeta: #E2F0CB;
-            /* Using a soft green/yellow instead of violet for variety, or stick to pastel purple */
-            --color-texto: #4A4A4A;
-            --color-blanco: #FFFFFF;
-            --font-main: 'Fredoka', sans-serif;
-            --font-display: 'Mouse Memoirs', sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-main);
-            /* Fondo con patrón de stickers */
-            background-color: #FECFEF;
-            background-image: url('assets/img/bg_stickers.png');
-            background-repeat: repeat;
-            background-size: 300px;
-            /* Ajuste del tamaño del patrón */
-            background-attachment: fixed;
-            color: var(--color-texto);
-            display: flex;
-            flex-direction: column;
-            height: auto;
-            min-height: 100vh;
-            align-items: center;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        /* Header */
-        header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 2rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            margin-bottom: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            font-family: var(--font-display);
-            font-size: 3rem;
-            margin: 0;
-            color: #FF6B6B;
-            text-shadow: 2px 2px 0px #FFF;
-            letter-spacing: 2px;
-            flex: 1;
-            /* El título ocupa el espacio central disponible */
-            text-align: center;
-        }
-
-        .header-info {
-            font-family: var(--font-main);
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--color-texto);
-            background: rgba(255, 255, 255, 0.5);
-            padding: 0.5rem 1rem;
-            border-radius: 15px;
-            min-width: 150px;
-            text-align: center;
-        }
-
-        .header-info.date {
-            color: #4ECDC4;
-            /* Color Kawaii Menta */
-        }
-
-        .header-info.time {
-            color: #FF6B6B;
-            /* Color Kawaii Rosa/Rojo */
-        }
-
-        /* Main Container */
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 0.5rem;
-        }
-
-        .menu-container {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 1200px;
-        }
-
-        /* Cards / Buttons */
-        .card-btn {
-            background-color: var(--color-blanco);
-            border-radius: 30px;
-            /* Muy redondeado */
-            width: 280px;
-            height: 340px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-            padding: 1rem;
-            border: 5px solid transparent;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-btn:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-btn img {
-            width: 210px;
-            height: 210px;
-            object-fit: contain;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
-            transition: transform 0.5s ease;
-        }
-
-        .card-btn:hover img {
-            transform: rotate(5deg) scale(1.1);
-        }
-
-        .card-btn span {
-            font-family: var(--font-display);
-            font-size: 3.5rem;
-            /* Muy grande, estilo Disney */
-            color: var(--color-texto);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Specific Button Styles */
-        .card-btn.ejercicios {
-            border-color: var(--color-menta);
-        }
-
-        .card-btn.ejercicios span {
-            color: #4ECDC4;
-        }
-
-        .card-btn.resumenes {
-            border-color: var(--color-rosa);
-        }
-
-        .card-btn.resumenes span {
-            color: #FF6B6B;
-        }
-
-        /* Footer */
-        footer {
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-            width: 100%;
-            margin-top: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        footer p {
-            background-color: rgba(255, 255, 255, 0.75);
-            padding: 0.5rem 1rem;
-            border-radius: 15px;
-            display: inline-block;
-            backdrop-filter: blur(2px);
-            font-weight: 600;
-            margin: 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Mobile / Tablet Responsiveness */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1.5rem 1rem;
-            }
-
-            .header-info {
-                font-size: 1rem;
-                width: 100%;
-                max-width: 300px;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-                order: -1;
-                /* Título siempre arriba en móvil si se prefiere, o dejar flujo normal */
-            }
-
-            .menu-container {
-                gap: 1.5rem;
-                flex-direction: column;
-            }
-
-            .card-btn {
-                width: 260px;
-                height: 300px;
-            }
-
-            .card-btn img {
-                width: 140px;
-                height: 140px;
-            }
-
-            .card-btn span {
-                font-size: 2.8rem;
-            }
+            /* ... rest are handled by style.css classes now ... */
         }
     </style>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/theme.js"></script>
     <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
 </head>
 
@@ -244,7 +24,7 @@
 
     <header>
         <div id="date-display" class="header-info date"></div>
-        <h1>¡Hola África! 🦄</h1>
+        <h1 id="welcome-title">¡Hola África! 🦄</h1>
         <div id="time-display" class="header-info time"></div>
     </header>
 
@@ -252,20 +32,20 @@
         <nav class="menu-container">
             <!-- Botón Ejercicios -->
             <a href="asignaturas.html?type=ejercicios" class="card-btn ejercicios">
-                <img src="assets/img/pencil.png" alt="Lápiz Kawaii">
+                <img id="img-ejercicios" src="assets/img/pencil.png" alt="Lápiz Kawaii">
                 <span>Ejercicios</span>
             </a>
 
             <!-- Botón Resúmenes -->
             <a href="asignaturas.html?type=resumenes" class="card-btn resumenes">
-                <img src="assets/img/notebook.png" alt="Cuaderno Kawaii">
+                <img id="img-resumenes" src="assets/img/notebook.png" alt="Cuaderno Kawaii">
                 <span>Resúmenes</span>
             </a>
         </nav>
     </main>
 
     <footer>
-        <p>Hecho con ❤️ para la mejor estudiante</p>
+        <p id="footer-text">Hecho con ❤️ para la mejor estudiante</p>
     </footer>
 
     <script>
@@ -293,6 +73,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
             setInterval(updateClock, 1000);
+
+            // Dynamic Text & Images based on Theme
+            const currentTheme = localStorage.getItem('appTheme');
+            if (currentTheme === 'theme-marcos') {
+                // Text
+                document.getElementById('welcome-title').textContent = '¡Hola Marcos! ⚽';
+
+                // Images
+                document.getElementById('img-ejercicios').src = 'assets/img/lapizmarcos.png';
+                document.getElementById('img-resumenes').src = 'assets/img/agendamarcos.png';
+            }
         });
     </script>
 

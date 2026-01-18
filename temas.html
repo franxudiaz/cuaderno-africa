@@ -10,11 +10,13 @@
     </style>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="icon" href="assets/img/pencil.png" type="image/x-icon">
+    <script src="assets/js/theme.js"></script>
 </head>
 
 
 <body>
     <a href="index.html" class="home-btn" title="Ir al Inicio">🏠</a>
+    <button onclick="history.back()" class="back-btn" title="Volver atrás">⬅️</button>
 
     <header>
         <div id="date-display" class="header-info date"></div>
@@ -97,6 +99,12 @@
             else if (asignatura === 'ingles') subjectName = "Inglés / English";
             else if (asignatura === 'valencia') subjectName = "Valencià";
             else if (asignatura === 'mates') subjectName = "Matemáticas";
+            else if (asignatura === 'medi') subjectName = "Coneixement del Medi";
+            else if (asignatura === 'religion') subjectName = "Religió";
+            else if (asignatura === 'musica') subjectName = "Música i Dansa";
+            else if (asignatura === 'plastica') subjectName = "Educació Plàstica";
+            else if (asignatura === 'ef') subjectName = "Educació Física";
+            else if (asignatura === 'proyectos') subjectName = "Projectes";
 
             subjectTitle.textContent = subjectName;
 
@@ -132,14 +140,32 @@
                 if (asignatura === 'ingles') {
                     unit3Link.href = `contenido.html?asignatura=ingles&tema=3&type=ejercicios`;
                     unit3Link.style.display = 'flex';
-                } else {
+                } else if (['valencia', 'medi', 'castellano'].includes(asignatura)) {
                     tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=ejercicios`;
                     tema4Link.style.display = 'flex';
-                }
-                // Hide placeholder if themes are shown (using simple logic)
-                const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
-                if (placeholder) placeholder.style.display = 'none';
 
+                    // Personalizar título del Tema 4 según asignatura
+                    const tema4Span = tema4Link.querySelector('span');
+                    if (asignatura === 'valencia') {
+                        tema4Span.textContent = "Tema 4: Guardians dels animals 🐾";
+                    } else if (asignatura === 'medi') {
+                        tema4Span.textContent = "Tema 4: Animals per tot arreu 🌍";
+                    } else if (asignatura === 'castellano') {
+                        tema4Span.textContent = "Tema 4: Habitantes de la Tierra 🌍";
+                    } else {
+                        tema4Span.textContent = "Tema 4";
+                    }
+                } else {
+                    // Empty Subject - Show Placeholder
+                    const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
+                    if (placeholder) placeholder.style.display = 'flex';
+                }
+
+                // Hide placeholder logic for whitelist
+                const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
+                if (['ingles', 'valencia', 'medi', 'castellano'].includes(asignatura) && placeholder) {
+                    placeholder.style.display = 'none';
+                }
             } else {
                 h1Title.textContent = "Resúmenes 📚";
                 document.title = `Resúmenes ${subjectName} - El Cuaderno de África`;
@@ -147,13 +173,32 @@
                 if (asignatura === 'ingles') {
                     unit3Link.href = `contenido.html?asignatura=ingles&tema=3&type=resumenes`;
                     unit3Link.style.display = 'flex';
-                } else {
+                } else if (['valencia', 'medi', 'castellano'].includes(asignatura)) {
                     tema4Link.href = `contenido.html?asignatura=${asignatura}&tema=4&type=resumenes`;
                     tema4Link.style.display = 'flex';
+
+                    // Personalizar título del Tema 4 también para resúmenes
+                    const tema4Span = tema4Link.querySelector('span');
+                    if (asignatura === 'valencia') {
+                        tema4Span.textContent = "Tema 4: Guardians dels animals 🐾";
+                    } else if (asignatura === 'medi') {
+                        tema4Span.textContent = "Tema 4: Animals per tot arreu 🌍";
+                    } else if (asignatura === 'castellano') {
+                        tema4Span.textContent = "Tema 4: Habitantes de la Tierra 🌍";
+                    } else {
+                        tema4Span.textContent = "Tema 4";
+                    }
+                } else {
+                    // Empty Subject - Show Placeholder
+                    const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
+                    if (placeholder) placeholder.style.display = 'flex';
                 }
-                // Hide placeholder
+
+                // Hide placeholder logic for whitelist
                 const placeholder = menuContainer.querySelector('div[style*="opacity: 0.5"]');
-                if (placeholder) placeholder.style.display = 'none';
+                if (['ingles', 'valencia', 'medi', 'castellano'].includes(asignatura) && placeholder) {
+                    placeholder.style.display = 'none';
+                }
             }
 
             // Reutilizar el reloj si el script clock.js hace lo mismo o pegarlo aquí si es simple

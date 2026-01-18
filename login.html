@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palabra Mágica - El Cuaderno</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mouse+Memoirs&display=swap');
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFB7B2 0%, #C7CEEA 100%);
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        h1 {
+            font-family: 'Mouse Memoirs', sans-serif;
+            color: #FF6B6B;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.5rem;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #4ECDC4;
+            transform: scale(1.02);
+        }
+
+        button {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Mouse Memoirs', sans-serif;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+        }
+
+        .hint {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            50% {
+                transform: translateX(10px);
+            }
+
+            75% {
+                transform: translateX(-10px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card" id="card">
+        <h1>✨ Palabra Mágica ✨</h1>
+        <p>¿Quién va a usar el cuaderno hoy?</p>
+
+        <input type="text" id="magicWord" placeholder="Escribe aquí..." autocomplete="off">
+
+        <button onclick="checkMagicWord()">¡Entrar! 🚀</button>
+
+        <p class="hint">Pista: Tu nombre o "africa"</p>
+    </div>
+
+    <script src="assets/js/theme.js"></script>
+    <script>
+        const input = document.getElementById('magicWord');
+        const card = document.getElementById('card');
+
+        // Allow Enter key to submit
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkMagicWord();
+            }
+        });
+
+        function checkMagicWord() {
+            const word = input.value.trim().toLowerCase();
+
+            if (word === 'africa') {
+                setAppTheme('theme-africa');
+            } else if (word === 'marcos') {
+                setAppTheme('theme-marcos'); // We will define this class in style.css
+            } else {
+                // Incorrect
+                card.classList.remove('shake');
+                void card.offsetWidth; // Trigger reflow
+                card.classList.add('shake');
+                input.value = '';
+                input.placeholder = "¡Ups! Inténtalo otra vez 🙈";
+                input.style.borderColor = '#FF6B6B';
+            }
+        }
+    </script>
+</body>
+
+</html>

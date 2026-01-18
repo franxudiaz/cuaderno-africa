@@ -1,15 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mouse+Memoirs&display=swap');
 
+/* Themes */
+/* Default (Login/Fallback) */
 :root {
   --color-rosa: #FFB7B2;
   --color-menta: #B5EAD7;
   --color-azul: #C7CEEA;
   --color-violeta: #E2F0CB;
-  /* Using a soft green/yellow instead of violet for variety, or stick to pastel purple */
   --color-texto: #4A4A4A;
   --color-blanco: #FFFFFF;
   --font-main: 'Fredoka', sans-serif;
   --font-display: 'Mouse Memoirs', sans-serif;
+  --bg-image: url('../img/bg_stickers.png');
+  --header-title-color: #FF6B6B;
+}
+
+/* Africa Theme (Kawaii/Girl) */
+.theme-africa {
+  --color-rosa: #FFB7B2;
+  /* Pastel Pink */
+  --color-menta: #B5EAD7;
+  /* Pastel Mint */
+  --color-azul: #C7CEEA;
+  /* Pastel Blue */
+  --color-texto: #4A4A4A;
+  --bg-image: url('../img/bg_stickers.png');
+  --header-title-color: #FF6B6B;
+}
+
+/* Marcos Theme (Valencia/Avengers/Boy) */
+.theme-marcos {
+  --color-rosa: #FF8F00;
+  /* Valencia Orange */
+  --color-menta: #F5F5F5;
+  /* Light Grey/White */
+  --color-azul: #0055A4;
+  /* Avengers Blue */
+  --color-texto: #333333;
+  --bg-image: url('../img/bg_marcos_theme.png');
+  --header-title-color: #FF8F00;
+  /* Match Orange */
 }
 
 body {
@@ -17,8 +47,9 @@ body {
   padding: 0;
   font-family: var(--font-main);
   /* Fondo con patrón de stickers */
-  background-color: #FECFEF;
-  background-image: url('../img/bg_stickers.png');
+  background-color: var(--color-menta);
+  /* Fallback color matches theme secondary */
+  background-image: var(--bg-image);
   background-repeat: repeat;
   background-size: 300px;
   /* Ajuste del tamaño del patrón */
@@ -53,7 +84,7 @@ h1 {
   font-family: var(--font-display);
   font-size: 3rem;
   margin: 0;
-  color: #FF6B6B;
+  color: var(--header-title-color);
   text-shadow: 2px 2px 0px #FFF;
   letter-spacing: 2px;
   flex: 1;
@@ -275,11 +306,13 @@ footer p {
 /* Home Button */
 .home-btn {
   position: fixed;
-  top: 20px;
+  top: 90px;
+  /* Moved down to avoid date overlap */
   left: 20px;
   width: 60px;
   height: 60px;
-  background-color: #FF6B6B;
+  background-color: var(--color-rosa);
+  /* Primary Theme Color */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -295,4 +328,30 @@ footer p {
 .home-btn:hover {
   transform: scale(1.1) rotate(-10deg);
   background-color: #ff4757;
+}
+/* Back Button */
+.back-btn {
+  position: fixed;
+  top: 170px; /* Below Home Button (90 + 60 + 20) */
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-azul); /* Secondary/Accent Color */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  font-size: 2.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: transform 0.2s, background-color 0.2s;
+  border: 3px solid white;
+  cursor: pointer;
+  color: #fff;
+}
+
+.back-btn:hover {
+  transform: scale(1.1) translateX(-5px);
+  filter: brightness(1.1);
 }
